@@ -1,0 +1,2 @@
+`app.all(/(.*)/, (req, res, next) => {`  <- Needed when getting an error like this: 'throw new TypeError(`Missing parameter name at ${i}: ${DEBUG_URL}`);
+TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError'
