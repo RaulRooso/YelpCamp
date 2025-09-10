@@ -22,7 +22,14 @@ const seedDB = async () => {
             author: '68babc721a1517cbf45366ab', //must add later currently miki
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
-            image: `https://picsum.photos/400?random=${Math.random()}`,
+            images: [
+                {
+                    url: `https://picsum.photos/400?random=${Math.random()}`,
+                },
+                {
+                    url: `https://picsum.photos/400?random=${Math.random()}`,
+                },
+            ],
             description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos laborum totam ut sequi debitis cum modi, non enim cupiditate in eligendi voluptate iusto tenetur necessitatibus quae id eaque voluptatibus? Sequi?',
             price,
         })
