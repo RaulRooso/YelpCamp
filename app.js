@@ -8,31 +8,39 @@ const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
-const ExpressError = require('./utils/ExpressError');
-const campgrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+const ExpressError = require('./utils/ExpressError'); s
 const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const helmet = require('helmet');
-
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
-
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
+const MongoDBStore = require('connect-mongo')(session);
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/yelp-camp';
+mongoose.connect(dbUrl);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
     console.log('Database connected');
 });
+const secret = process.env.SECRET || 'thisissuposedtobeasecret'
+const store = new MongoDBStore.create({
+    url: dbUrl,
+    secret: secret,
+    touchAfter: 24 * 60 * 60,
+});
+
+store.on('error', function (e) {
+    console, log('Session store error!')
+})
 
 const app = express();
 const sessionConfig = {
     name: 'session',
-    secret: 'thisissuposedtobeasecret',
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -67,12 +75,14 @@ const styleSrcUrls = [
     "https://api.tiles.mapbox.com/",
     "https://fonts.googleapis.com/",
     "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net",
 ];
 const connectSrcUrls = [
     "https://api.mapbox.com/",
     "https://a.tiles.mapbox.com/",
     "https://b.tiles.mapbox.com/",
     "https://events.mapbox.com/",
+    "https://cdn.jsdelivr.net",
 ];
 const fontSrcUrls = [];
 app.use(
@@ -134,8 +144,9 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err });
 });
 
-app.listen(3000, () => {
-    console.log('Serving on port 3000');
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Serving on port ${port}`);
 });
 
 // app.all(/(.*)/, (req, res, next) => {

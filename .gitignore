@@ -1,3 +1,4 @@
 .env
 .setup
 uploads
+node_modules
